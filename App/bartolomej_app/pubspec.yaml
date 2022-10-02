@@ -20,6 +20,7 @@ dependencies:
   flutter_bloc: ^8.0.1
   google_fonts: ^3.0.1
   shared_preferences: ^2.0.15
+  easy_localization: ^3.0.1
   dio: ^4.0.6
   rflutter_alert: ^2.0.4
 
@@ -36,3 +37,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/translations/
+    - assets/faces/
