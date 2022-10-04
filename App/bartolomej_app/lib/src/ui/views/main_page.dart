@@ -1,11 +1,18 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:template_app/src/core/bloc/bartolomej/bartolomej_bloc.dart';
+import 'package:template_app/src/core/bloc/bartolomej/bartolomej_state.dart';
 import 'package:template_app/src/core/models/mood_model.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:template_app/src/core/models/status_model.dart';
+import 'package:template_app/src/ui/components/actions_builder.dart';
 import 'package:template_app/src/ui/components/mood_shower.dart';
+import 'package:template_app/src/ui/components/name_header.dart';
 import 'package:template_app/src/ui/components/stats_header.dart';
 import 'package:template_app/src/ui/views/feed_page.dart';
+import 'package:template_app/constants.dart' as constants;
+import 'package:template_app/src/ui/views/settings_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -17,19 +24,31 @@ class MainPage extends StatefulWidget {
 class _MainPage extends State<MainPage> {
   @override
   void initState() {
+    BlocProvider.of<BartolomejBloc>(context).add(const LoadStatus());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: NewBody(),
-    );
+    return SafeArea(child: BlocBuilder<BartolomejBloc, BartolomejState>(
+      builder: ((context, state) {
+        return state.maybeWhen(loadedStatus: ((status) {
+          return NewBody(status: status);
+        }), loadingError: () {
+          return const LoadingErrorBody();
+        }, loading: () {
+          return const LoadingIndicator();
+        }, orElse: () {
+          return Container();
+        });
+      }),
+    ));
   }
 }
 
 class NewBody extends StatelessWidget {
-  NewBody({super.key});
+  final StatusModel status;
+  const NewBody({required this.status, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,16 +57,129 @@ class NewBody extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
-          children: const [
-            StatsHeader(name: "Bartoloměj", mood: 76, hunger: 8),
-            MoodShower(
-              mood: 76,
-              imgName: "happy2",
+          children: [
+            const NameHeader(
+              title: "Bartoloměj",
             ),
+            StatsHeader(
+                name: "Bartoloměj", mood: status.mood, hunger: status.hunger),
+            MoodShower(
+              moodIndex: status.emotionIndex,
+              moodName: status.emotion,
+            ),
+            const ActionsBuilder(),
           ],
         ),
       ),
     ));
+  }
+}
+
+class LoadingErrorBody extends StatelessWidget {
+  const LoadingErrorBody({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            "status_loading_error".tr(),
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 30,
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.60,
+            height: 70,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: constants.mainColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12), // <-- Radius
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.refresh,
+                    color: Colors.black,
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    "try_again_button_label".tr(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 21, color: Colors.black),
+                  ),
+                ],
+              ),
+              onPressed: () {
+                BlocProvider.of<BartolomejBloc>(context)
+                    .add(const LoadStatus());
+              },
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.40,
+            height: 70,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: constants.mainColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12), // <-- Radius
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.settings,
+                    color: Colors.black,
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    "go_to_settings_button_label".tr(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 21, color: Colors.black),
+                  ),
+                ],
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class LoadingIndicator extends StatelessWidget {
+  const LoadingIndicator({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
+    );
   }
 }
 

@@ -1,8 +1,27 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:template_app/src/core/models/status_model.dart';
 
 class BartolomejProvider {
+  Future<StatusModel?> getStatus(String ip) async {
+    //var url = "$ip/change_face?face=$faceId";
+    var url = Uri(
+      scheme: "http",
+      host: ip,
+      path: "status",
+    );
+    try {
+      final resp = await http.get(url);
+
+      return StatusModel.fromJson(jsonDecode(resp.body));
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<void> changeFace(String ip, String faceId) async {
     //var url = "$ip/change_face?face=$faceId";
     var url = Uri(

@@ -7,6 +7,13 @@ abstract class BartolomejEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class LoadStatus extends BartolomejEvent {
+  const LoadStatus();
+
+  @override
+  List<Object> get props => [];
+}
+
 class ChangeFace extends BartolomejEvent {
   final MoodModel face;
   const ChangeFace({required this.face});

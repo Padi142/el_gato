@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:template_app/src/core/bloc/bartolomej/bartolomej_bloc.dart';
+import 'package:template_app/constants.dart' as constants;
+
 import 'package:template_app/src/core/bloc/feed/feed_bloc.dart';
 
 class FeedPage extends StatefulWidget {
@@ -38,8 +40,11 @@ class _MainPage extends State<FeedPage> {
                 BlocProvider.of<FeedBloc>(context).add(const Feed());
               },
             ),
+            Center(
+              child: Text("food_drop_label".tr()),
+            ),
             const Divider(
-              color: Colors.red,
+              color: constants.secondaryColor,
               thickness: 5,
             ),
             SizedBox(

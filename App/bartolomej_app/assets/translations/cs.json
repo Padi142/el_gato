@@ -4,5 +4,18 @@
     "cry_face_label":"Brecir 😥 ",
     "sad_face_label": "Smutni 😖",
     "happy_face_label": "Vesele 😊",
-    "kawai_face_label": "JOOO ✨✨"
+    "kawai_face_label": "JOOO ✨✨",
+    "unknown_mood_label": "Neznámá nálada",
+
+
+    "feed_button_label":"Nakrmit",
+    "emotions_button_label":"Emoce",
+
+    "food_drop_label":"Sem přetáhni jídlo",
+
+    "settings_page_laber":"Nastavení",
+
+    "status_loading_error":"Nepodařilo se spojit s Bartolomějem :/",
+    "try_again_button_label":"Zkusit znovu",
+    "go_to_settings_button_label":"Nastavení"
 }
